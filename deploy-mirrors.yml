@@ -1,0 +1,76 @@
+---
+- name: Deploy Mirroring Infrastructure
+  hosts: localhost
+  connection: local
+  vars_files:
+    - vars.yaml
+
+  tasks:
+    - name: Create required directory structure
+      file:
+        path: "{{ item }}"
+        state: directory
+        mode: '0755'
+      with_items:
+        - "{{ stack_path }}/nginx/config"
+        - "{{ stack_path }}/nginx/www/.assets"
+        - "{{ stack_path }}/nginx/certs"
+        - "{{ stack_path }}/nginx/secret"
+
+    - name: Create repo-specific directories
+      file:
+        path: "{{ stack_path }}/nginx/www/{{ item.name }}"
+        state: directory
+        mode: '0755'
+      loop: "{{ repos }}"
+
+    - name: Deploy universal assets
+      copy:
+        src: files/
+        dest: "{{ stack_path }}/nginx/www/.assets/"
+
+    - name: Deploy nginx.conf
+      template:
+        src: config/nginx.conf.j2
+        dest: "{{ stack_path }}/nginx/config/nginx.conf"
+        mode: '0644'
+
+    - name: Deploy GPG Key Generation Script
+      template:
+        src: config/generate-gpg.sh.j2
+        dest: "{{ stack_path }}/nginx/config/generate-gpg.sh"
+        mode: '0755'
+
+    - name: Deploy Signing Scripts
+      template:
+        src: config/sign-repo.sh.j2
+        dest: "{{ stack_path }}/nginx/config/sign-{{ item.name }}.sh"
+        mode: '0755'
+      loop: "{{ repos }}"
+
+    - name: Deploy Syncing Scripts
+      template:
+        src: config/sync-repo.sh.j2
+        dest: "{{ stack_path }}/nginx/config/sync-{{ item.name }}.sh"
+        mode: '0755'
+      loop: "{{ repos }}"
+
+    - name: Deploy Rollback Scripts
+      template:
+        src: config/rollback-repo.sh.j2
+        dest: "{{ stack_path }}/nginx/config/rollback-{{ item.name }}.sh"
+        mode: '0755'
+      loop: "{{ repos }}"
+
+    - name: Deploy HTML Landing Pages
+      template:
+        src: config/index.html.j2
+        dest: "{{ stack_path }}/nginx/www/{{ item.name }}/index.html"
+        mode: '0644'
+      loop: "{{ repos }}"
+
+    - name: Deploy docker-compose.yml
+      template:
+        src: docker-compose.yml.j2
+        dest: "{{ stack_path }}/nginx/docker-compose.yml"
+        mode: '0644'

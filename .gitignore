@@ -1,0 +1,7 @@
+# General
+*.log
+*.tmp
+.DS_Store
+
+# Ansible
+*.retry

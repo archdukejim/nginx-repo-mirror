@@ -1,0 +1,25 @@
+services:
+  nginx:
+    image: "{{ nginx_image }}"
+    container_name: nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - "{{ stack_path }}/nginx/config/nginx.conf:/etc/nginx/conf.d/default.conf:ro"
+      - "{{ stack_path }}/nginx/www/:/usr/share/nginx/html:ro"
+{% for repo in repos %}
+{% for target_item in repo.target %}
+{% if target_item.host_path is defined %}
+      - "{{ target_item.host_path }}:/usr/share/nginx/html/{{ repo.name }}:ro"
+{% endif %}
+{% endfor %}
+{% endfor %}
+      - "{{ stack_path }}/nginx/www/.assets/:/usr/share/nginx/html/.assets/:ro"
+      - "{{ stack_path }}/nginx/certs:/etc/nginx/certs:ro"
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3

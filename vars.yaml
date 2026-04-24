@@ -1,0 +1,23 @@
+kit_name: example_kit
+domain: example.internal
+cert_path: /opt/nginx/certs
+stack_path: /opt
+nginx_image: nginx:latest
+
+repos:
+  - name: ubuntu
+    fqdn: ubuntu.repo.{{ domain }}
+    target:
+    - uri: <target_ip_or_hostname>
+    - host_path: /mnt/ubuntu-repo
+    source:
+    - uri: ubuntu.archive.ubuntu.com
+    - path: ubuntu ### this could be swapped to allow version history path, such as 20260418
+  - name: custom_repo
+    fqdn: custom.repo.{{ domain }}
+    target:
+    - uri: <target_ip_or_hostname>
+    - host_path: /mnt/custom-repo
+    source:
+    - uri: <source_repo_url>
+    - path: <source_repo_path> ### this could be swapped to allow version history path, such as 20260418

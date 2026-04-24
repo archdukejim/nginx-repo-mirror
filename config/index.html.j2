@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ item.name | capitalize }} Mirror - {{ kit_name | capitalize }}</title>
+    <link rel="stylesheet" href="/.assets/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>{{ item.name | capitalize }} Internal Mirror</h1>
+            <p class="subtitle">Trusted secure repository for {{ domain }}</p>
+        </header>
+
+        <section class="instructions">
+            <h2>How to Use This Mirror</h2>
+            <p>Run the following command on your machine to add this mirror as a trusted package source:</p>
+
+            <div class="code-block">
+                {% if item.name == 'ubuntu' %}
+                <button class="copy-btn" onclick="copyCode()">Copy</button>
+                <code id="install-cmd">echo "deb [signed-by=/usr/share/keyrings/{{ kit_name }}-repo-key.gpg] http://{{ item.fqdn }}/{{ item.name }} focal main" | sudo tee /etc/apt/sources.list.d/{{ kit_name }}-{{ item.name }}.list &amp;&amp; curl -fsSL http://{{ item.fqdn }}/repo-key.gpg | sudo gpg --dearmor -o /usr/share/keyrings/{{ kit_name }}-repo-key.gpg</code>
+                {% else %}
+                <button class="copy-btn" onclick="copyCode()">Copy</button>
+                <code id="install-cmd">echo "deb [signed-by=/usr/share/keyrings/{{ kit_name }}-repo-key.gpg] http://{{ item.fqdn }}/{{ item.name }} stable main" | sudo tee /etc/apt/sources.list.d/{{ kit_name }}-{{ item.name }}.list &amp;&amp; curl -fsSL http://{{ item.fqdn }}/repo-key.gpg | sudo gpg --dearmor -o /usr/share/keyrings/{{ kit_name }}-repo-key.gpg</code>
+                {% endif %}
+            </div>
+            
+            <p class="note">Make sure to run <code>sudo apt update</code> after adding the source.</p>
+        </section>
+
+        <footer>
+            <p>Maintained by the {{ kit_name | capitalize }} Infrastructure Team</p>
+        </footer>
+    </div>
+
+    <script>
+        function copyCode() {
+            var codeText = document.getElementById("install-cmd").innerText;
+            navigator.clipboard.writeText(codeText).then(function() {
+                var btn = document.querySelector(".copy-btn");
+                btn.innerText = "Copied!";
+                setTimeout(function() { btn.innerText = "Copy"; }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>

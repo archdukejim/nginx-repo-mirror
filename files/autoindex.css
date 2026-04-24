@@ -1,0 +1,88 @@
+/* Modern Autoindex Styling */
+:root {
+    --bg-color: #f8f9fa;
+    --text-color: #333;
+    --heading-color: #2c3e50;
+    --border-color: #e9ecef;
+    --table-bg: white;
+    --table-header-bg: #3498db;
+    --table-header-text: white;
+    --table-row-border: #edf2f7;
+    --table-row-hover: #f1f7fd;
+    --link-color: #3498db;
+    --table-shadow: rgba(0,0,0,0.05);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg-color: #0f172a;
+        --text-color: #f8fafc;
+        --heading-color: #e2e8f0;
+        --border-color: #334155;
+        --table-bg: #1e293b;
+        --table-header-bg: #2563eb;
+        --table-header-text: #ffffff;
+        --table-row-border: #334155;
+        --table-row-hover: #0b1120;
+        --link-color: #60a5fa;
+        --table-shadow: rgba(0,0,0,0.5);
+    }
+}
+
+body {
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    padding: 2rem;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+h1 {
+    color: var(--heading-color);
+    font-weight: 300;
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 1rem;
+    margin-bottom: 2rem;
+}
+
+/* Style the autoindex table */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--table-bg);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px var(--table-shadow);
+}
+
+th {
+    background-color: var(--table-header-bg);
+    color: var(--table-header-text);
+    text-align: left;
+    padding: 12px 15px;
+    font-weight: 600;
+}
+
+td {
+    padding: 12px 15px;
+    border-bottom: 1px solid var(--table-row-border);
+}
+
+tr:hover {
+    background-color: var(--table-row-hover);
+}
+
+a {
+    color: var(--link-color);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Hide the 'Parent Directory' text but keep the link */
+hr { display: none; }
+pre { background: none; color: inherit; padding: 0; }
