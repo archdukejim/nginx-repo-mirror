@@ -10,9 +10,15 @@ The frontend of the repository is served by a lightweight NGINX container.
 - Custom landing pages (`index.html`) provide simple `apt` one-liners for quick client consumption.
 - The repository directories themselves are served with `autoindex` enabled, providing a directory browsing experience styled securely via `.assets/`.
 
+### Docker Registry Mirror
+In addition to OS packages, a private docker registry mirror (`registry:2`) is hosted to cache container images and is mapped to `/mnt/docker-registry/images`.
+
+### Systemd Integration
+The entire Docker Compose stack is managed via a dedicated systemd service (`nginx-repo-mirror.service`), ensuring high availability and proper startup order.
+
 ### Storage Space Efficiency
 Mirroring entire OS package repositories can consume immense storage. To mitigate this:
-- Synchronization uses `rsync --link-dest`.
+- Synchronization uses `rsyncd` and `rsync --link-dest`.
 - During a sync, new downloads are saved in a fresh `YYYYMMDD` date folder.
 - Any files that haven't changed since the previous sync are **hard-linked** from the previous folder.
 - This creates the illusion of full snapshot folders for every sync date while using zero additional disk space for unchanged data.

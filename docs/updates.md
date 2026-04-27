@@ -17,7 +17,7 @@ If an upstream repository pushes a broken package update and it successfully syn
 2. Execute the rollback script for the broken repository, passing the target `YYYYMMDD` date you wish to revert to.
 
 ```bash
-bash /opt/nginx/config/rollback-ubuntu.sh 20260324
+bash /opt/repo/repo_control/ubuntu/rollback-ubuntu.sh 20260324
 ```
 
 ### What Happens During a Rollback?

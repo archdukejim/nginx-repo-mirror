@@ -23,3 +23,12 @@ services:
       interval: 30s
       timeout: 5s
       retries: 3
+
+  docker-registry:
+    image: registry:2
+    container_name: docker-registry
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    volumes:
+      - /mnt/docker-registry/images:/var/lib/registry:rw

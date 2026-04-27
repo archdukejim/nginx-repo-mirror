@@ -6,12 +6,12 @@ This document outlines the day-to-day operations required to maintain your NGINX
 
 Upstream repositories update constantly. You must routinely run the synchronization scripts to pull down new packages. 
 
-Each repository has a dedicated script located at `{{ stack_path }}/nginx/config/sync-<repo_name>.sh`.
+Each repository has a dedicated script located at `{{ stack_path }}/repo/repo_control/<repo_name>/sync-<repo_name>.sh`.
 
 ### Manual Sync
 To manually trigger a synchronization for a specific repository (e.g., Ubuntu):
 ```bash
-bash /opt/nginx/config/sync-ubuntu.sh
+bash /opt/repo/repo_control/ubuntu/sync-ubuntu.sh
 ```
 
 ### Automated Sync (Cron)
@@ -20,10 +20,10 @@ It is highly recommended to automate synchronization via Cron. You can configure
 Run `crontab -e` and add the following (adjusting times as needed):
 ```bash
 # Sync Ubuntu every night at 2:00 AM
-0 2 * * * /bin/bash /opt/nginx/config/sync-ubuntu.sh >> /var/log/sync-ubuntu.log 2>&1
+0 2 * * * /bin/bash /opt/repo/repo_control/ubuntu/sync-ubuntu.sh >> /var/log/sync-ubuntu.log 2>&1
 
 # Sync ClamAV every night at 4:00 AM
-0 4 * * * /bin/bash /opt/nginx/config/sync-clamav.sh >> /var/log/sync-clamav.log 2>&1
+0 4 * * * /bin/bash /opt/repo/repo_control/clamav/sync-clamav.sh >> /var/log/sync-clamav.log 2>&1
 ```
 
 ## Managing GPG Keys
@@ -39,6 +39,6 @@ If a signature expires, a GPG key changes, or you manually modify the contents o
 
 Each repository has a dedicated signing script.
 ```bash
-bash /opt/nginx/config/sign-ubuntu.sh
+bash /opt/repo/repo_control/ubuntu/sign-ubuntu.sh
 ```
 This command scans the `Latest` directory, removes old signatures, and applies fresh detached and clearsign signatures based on the current GPG key.

@@ -4,16 +4,16 @@ The `deploy-mirrors.yml` Ansible playbook orchestrates the deployment of the NGI
 
 ## Playbook Execution Flow (`deploy-mirrors.yml`)
 
-1. **Create required directory structure**: Bootstraps the base `nginx/` directory inside your `stack_path` with subdirectories like `config`, `certs`, `secret`, and `www`.
-2. **Create repo-specific directories**: Iterates over the `repos` list to create dedicated web-root folders for each repository's landing page.
+1. **Create required directory structure**: Bootstraps the base `nginx/`, `repo/`, and `docker-registry/` directories inside your `stack_path`.
+2. **Create repo-specific directories**: Iterates over the `repos` list to create dedicated web-root folders for each repository's landing page and control scripts.
 3. **Deploy universal assets**: Copies the `files/` directory from the repository over to the target machine's `.assets/` directory to style the landing pages and directory indexes.
-4. **Deploy nginx.conf**: Templates `config/nginx.conf.j2` to securely route traffic to the respective repository locations.
-5. **Deploy GPG Key Generation Script**: Templates `config/generate-gpg.sh.j2`.
-6. **Deploy Signing Scripts**: Generates a dedicated `sign-<repo>.sh` script for each repository.
-7. **Deploy Syncing Scripts**: Generates a dedicated `sync-<repo>.sh` script for each repository based on its unique `source` and `target` configurations.
-8. **Deploy Rollback Scripts**: Generates a dedicated `rollback-<repo>.sh` script for each repository.
-9. **Deploy HTML Landing Pages**: Generates custom `index.html` files for each repository hosting the required `apt` one-liner.
-10. **Deploy docker-compose.yml**: Deploys the configuration required to launch the NGINX container mapping the required repository endpoints.
+4. **Deploy nginx.conf**: Templates `jinja/nginx.conf.j2` to securely route traffic to the respective repository locations.
+5. **Deploy GPG Key Generation Script**: Templates `jinja/generate-gpg.sh.j2`.
+6. **Deploy Scripts**: Generates dedicated `sign-<repo>.sh`, `sync-<repo>.sh`, and `rollback-<repo>.sh` scripts for each repository under `/opt/repo/repo_control/<repo_name>/`.
+7. **Deploy HTML Landing Pages**: Generates custom `index.html` files for each repository hosting the required `apt` one-liner.
+8. **Deploy docker-compose.yml**: Deploys the configuration required to launch the NGINX and Docker Registry containers.
+9. **Save Artifacts**: Backs up templates, playbooks, and variables to `/opt/repo/` to track deployment.
+10. **Systemd Integration**: Deploys the `docker-compose-app.service.j2` template as `nginx-repo-mirror.service` and enables the containers on boot.
 
 ## Configuration Schema (`vars.yaml`)
 

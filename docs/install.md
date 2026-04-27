@@ -22,28 +22,23 @@ Open `vars.yaml` and configure the following:
   - `source.uri` and `source.path`: Upstream location to `rsync` from.
 
 ## Step 2: Deploy Infrastructure
-Run the Ansible playbook locally or against your target server to generate the configuration and directories.
+Run the `setup.sh` wrapper script which will automatically generate the inventory and execute the Ansible playbook against your target machine.
 
 ```bash
-# If running locally
-ansible-playbook -i localhost, -c local deploy-mirrors.yml
-
-# If running against a remote host (ensure you have ssh access setup)
-ansible-playbook -i inventory.ini deploy-mirrors.yml
+./setup.sh --target <target_ip_or_hostname> --ssh-user <username>
 ```
 
-## Step 3: Initial Synchronization
+## Step 3: Start the Service
+The playbook automatically configures a systemd service to manage the containers. You can ensure it is running with:
+```bash
+systemctl enable --now nginx-repo-mirror
+```
+
+## Step 4: Initial Synchronization
 The deployment sets up the directories and scripts, but it **does not** download the packages. 
 
-For each repository you defined, execute its specific synchronization script to perform the initial download and key signing:
+For each repository you defined, execute its specific synchronization script located in its control folder to perform the initial download and key signing:
 ```bash
-bash /opt/nginx/config/sync-<repo_name>.sh
+bash /opt/repo/repo_control/<repo_name>/sync-<repo_name>.sh
 ```
-*(Replace `/opt` with your `stack_path`)*
-
-## Step 4: Start the NGINX Container
-Once the initial sync is complete, bring up the web server:
-```bash
-cd /opt/nginx/
-docker-compose up -d
-```
+*(Replace `/opt` with your configured `stack_path`)*

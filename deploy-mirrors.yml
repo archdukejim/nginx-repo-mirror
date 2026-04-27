@@ -1,7 +1,6 @@
 ---
 - name: Deploy Mirroring Infrastructure
-  hosts: localhost
-  connection: local
+  hosts: all
   vars_files:
     - vars.yaml
 
@@ -16,8 +15,19 @@
         - "{{ stack_path }}/nginx/www/.assets"
         - "{{ stack_path }}/nginx/certs"
         - "{{ stack_path }}/nginx/secret"
+        - "{{ stack_path }}/docker-registry"
+        - "{{ stack_path }}/repo/jinja"
+        - "{{ stack_path }}/repo/playbooks"
+        - "{{ stack_path }}/repo/vars"
 
-    - name: Create repo-specific directories
+    - name: Create repo_control directories
+      file:
+        path: "{{ stack_path }}/repo/repo_control/{{ item.name }}"
+        state: directory
+        mode: '0755'
+      loop: "{{ repos }}"
+
+    - name: Create repo-specific www directories
       file:
         path: "{{ stack_path }}/nginx/www/{{ item.name }}"
         state: directory
@@ -31,46 +41,79 @@
 
     - name: Deploy nginx.conf
       template:
-        src: config/nginx.conf.j2
+        src: jinja/nginx.conf.j2
         dest: "{{ stack_path }}/nginx/config/nginx.conf"
         mode: '0644'
 
     - name: Deploy GPG Key Generation Script
       template:
-        src: config/generate-gpg.sh.j2
+        src: jinja/generate-gpg.sh.j2
         dest: "{{ stack_path }}/nginx/config/generate-gpg.sh"
         mode: '0755'
 
     - name: Deploy Signing Scripts
       template:
-        src: config/sign-repo.sh.j2
-        dest: "{{ stack_path }}/nginx/config/sign-{{ item.name }}.sh"
+        src: jinja/sign-repo.sh.j2
+        dest: "{{ stack_path }}/repo/repo_control/{{ item.name }}/sign-{{ item.name }}.sh"
         mode: '0755'
       loop: "{{ repos }}"
 
     - name: Deploy Syncing Scripts
       template:
-        src: config/sync-repo.sh.j2
-        dest: "{{ stack_path }}/nginx/config/sync-{{ item.name }}.sh"
+        src: jinja/sync-repo.sh.j2
+        dest: "{{ stack_path }}/repo/repo_control/{{ item.name }}/sync-{{ item.name }}.sh"
         mode: '0755'
       loop: "{{ repos }}"
 
     - name: Deploy Rollback Scripts
       template:
-        src: config/rollback-repo.sh.j2
-        dest: "{{ stack_path }}/nginx/config/rollback-{{ item.name }}.sh"
+        src: jinja/rollback-repo.sh.j2
+        dest: "{{ stack_path }}/repo/repo_control/{{ item.name }}/rollback-{{ item.name }}.sh"
         mode: '0755'
       loop: "{{ repos }}"
 
     - name: Deploy HTML Landing Pages
       template:
-        src: config/index.html.j2
+        src: jinja/index.html.j2
         dest: "{{ stack_path }}/nginx/www/{{ item.name }}/index.html"
         mode: '0644'
       loop: "{{ repos }}"
 
     - name: Deploy docker-compose.yml
       template:
-        src: docker-compose.yml.j2
+        src: jinja/docker-compose.yml.j2
         dest: "{{ stack_path }}/nginx/docker-compose.yml"
         mode: '0644'
+
+    - name: Save Jinja Templates Artifacts
+      copy:
+        src: jinja/
+        dest: "{{ stack_path }}/repo/jinja/"
+        mode: '0644'
+
+    - name: Save Playbooks Artifacts
+      copy:
+        src: deploy-mirrors.yml
+        dest: "{{ stack_path }}/repo/playbooks/deploy-mirrors.yml"
+        mode: '0644'
+
+    - name: Save Variables Artifacts
+      copy:
+        src: vars.yaml
+        dest: "{{ stack_path }}/repo/vars/vars.yaml"
+        mode: '0644'
+
+    - name: Deploy systemd service
+      template:
+        src: jinja/docker-compose-app.service.j2
+        dest: /etc/systemd/system/nginx-repo-mirror.service
+        mode: '0644'
+      become: true
+
+    - name: Enable and start systemd service
+      systemd:
+        name: nginx-repo-mirror
+        enabled: yes
+        state: started
+        daemon_reload: yes
+      become: true

@@ -21,19 +21,26 @@ Detailed documentation for this project is available in the `docs/` directory:
 ```text
 repo-root/
 ├─ deploy-mirrors.yml         ← Ansible playbook to deploy the stack
+├─ setup.sh                   ← Wrapper script to trigger deployment
 ├─ vars.yaml                  ← Configuration for all mirrors
-├─ files/
-│   ├─ style.css              ← Styles for HTML landing pages
-│   ├─ autoindex.css          ← Styles for directory listings
-│   └─ header.html            ← Header for autoindex
-├─ config/
-│   ├─ docker-compose.yml.j2  ← Docker container deployment
-│   ├─ generate-gpg.sh.j2     ← Key generation script
-│   ├─ index.html.j2          ← Landing page template
-│   ├─ nginx.conf.j2          ← Dynamic NGINX mapping configuration
-│   ├─ rollback-repo.sh.j2    ← Rollback mechanism
-│   ├─ sign-repo.sh.j2        ← Signing mechanism
-│   └─ sync-repo.sh.j2        ← Sync mechanism
+├─ www/
+│   ├─ .assets/
+│   │   ├─ style.css          ← Styles for HTML landing pages
+│   │   ├─ autoindex.css      ← Styles for directory listings
+│   │   └─ header.html        ← Header for autoindex
+│   ├─ ubuntu/
+│   │   └─ index.html         ← Landing page template for repo
+│   └─ clamav/
+│       └─ index.html         ← Landing page template for repo
+├─ jinja/
+│   ├─ docker-compose.yml.j2          ← Docker container deployment
+│   ├─ docker-compose-app.service.j2  ← Systemd service template
+│   ├─ generate-gpg.sh.j2             ← Key generation script
+│   ├─ index.html.j2                  ← Landing page template
+│   ├─ nginx.conf.j2                  ← Dynamic NGINX mapping configuration
+│   ├─ rollback-repo.sh.j2            ← Rollback mechanism
+│   ├─ sign-repo.sh.j2                ← Signing mechanism
+│   └─ sync-repo.sh.j2                ← Sync mechanism
 ├─ docs/                      ← Comprehensive documentation
 └─ README.md
 ```
