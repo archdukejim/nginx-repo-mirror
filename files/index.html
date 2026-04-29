@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{COMPANY}} Internal Package Mirrors</title>
+    <!-- Assuming the style.css is served from / or /template/ -->
+    <link rel="stylesheet" href="/template/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>{{COMPANY}} Internal Package Mirrors</h1>
+            <p class="subtitle">Trusted Repositories for Baseline Deployments</p>
+        </header>
+
+        <div class="tabs-wrapper">
+            <div class="tabs">
+                <a href="https://{{OS}}.repo.{{COMPANY}}.internal/" class="tab active">{{OS}}</a>
+                <a href="https://{{CONTAINER}}.repo.{{COMPANY}}.internal/" class="tab">{{CONTAINER}}</a>
+                <a href="https://{{BROWSER}}.repo.{{COMPANY}}.internal/" class="tab">{{BROWSER}}</a>
+            </div>
+        </div>
+
+        <main>
+            <div class="card">
+                <h2>Quick Start: {{OS}}</h2>
+                <p>Add this line to <code>/etc/apt/sources.list</code>:</p>
+                <pre><code>deb https://{{OS}}.repo.{{COMPANY}}.internal/ {{DISTRO}} {{COMPONENTS}}</code></pre>
+                
+                <p style="margin-top: 1.5rem;">Import the GPG key:</p>
+                <pre><code><span class="cmd">wget</span> -nv -O- https://repo.{{COMPANY}}.internal/repo-key.gpg | <span class="cmd">sudo gpg</span> --dearmor -o /usr/share/keyrings/{{COMPANY}}-repo.gpg</code></pre>
+            </div>
+
+            <div class="card">
+                <h2>Service Status</h2>
+                <p>Mirrors are refreshed daily at {{UPDATE_TIME}} UTC. For assistance, contact the infrastructure team.</p>
+            </div>
+        </main>
+
+        <footer>
+            &#10227; Last Updated: {{LAST_UPDATE}}.<br>
+            &#8480; {{ORG_1}} &bull; &#8453; {{ORG_2}}
+        </footer>
+    </div>
+</body>
+</html>
