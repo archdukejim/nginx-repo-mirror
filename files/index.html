@@ -1,47 +1,101 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{COMPANY}} Internal Package Mirrors</title>
+    <title>{{ Organization }} Internal Package Mirrors</title>
     <!-- Assuming the style.css is served from / or /template/ -->
-    <link rel="stylesheet" href="/template/style.css">
+    <link rel="stylesheet" href="style.css">
+    <script>
+        try {
+            const savedTheme = localStorage.getItem('selected-theme');
+            if (savedTheme && savedTheme !== 'auto') {
+                document.documentElement.setAttribute('data-theme', savedTheme);
+            }
+        } catch (e) {}
+    </script>
 </head>
+
 <body>
+    <div class="theme-selector">
+        <select id="theme-select" class="theme-select" aria-label="Select Theme">
+            <option value="auto">System Auto</option>
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+            <option value="army">Army</option>
+            <option value="navy">Navy</option>
+            <option value="air-force">Air Force</option>
+            <option value="marines">Marines</option>
+            <option value="coast-guard">Coast Guard</option>
+            <option value="space-force">Space Force</option>
+            <option value="cyberpunk">Cyberpunk</option>
+        </select>
+    </div>
     <div class="container">
         <header>
-            <h1>{{COMPANY}} Internal Package Mirrors</h1>
+            <h1>{{ Organization }} Internal Package Mirrors</h1>
             <p class="subtitle">Trusted Repositories for Baseline Deployments</p>
         </header>
 
         <div class="tabs-wrapper">
             <div class="tabs">
-                <a href="https://{{OS}}.repo.{{COMPANY}}.internal/" class="tab active">{{OS}}</a>
-                <a href="https://{{CONTAINER}}.repo.{{COMPANY}}.internal/" class="tab">{{CONTAINER}}</a>
-                <a href="https://{{BROWSER}}.repo.{{COMPANY}}.internal/" class="tab">{{BROWSER}}</a>
+                {% for repo in repos %}
+                <a href="https://{{ repo.fqdn }}/" class="tab {% if item is defined and repo.name == item.name %}active{% endif %}">{{ repo.name | title }}</a>
+                {% endfor %}
             </div>
         </div>
 
         <main>
             <div class="card">
-                <h2>Quick Start: {{OS}}</h2>
+                <h2>Quick Start: {{ item.name | title if item is defined else 'Repository' }}</h2>
                 <p>Add this line to <code>/etc/apt/sources.list</code>:</p>
-                <pre><code>deb https://{{OS}}.repo.{{COMPANY}}.internal/ {{DISTRO}} {{COMPONENTS}}</code></pre>
-                
+                <pre><code>deb https://{{ item.fqdn if item is defined else 'repo.' ~ domain }}/ {{ item.distro | default('noble') }} {{ item.components | default('main') }}</code></pre>
+
                 <p style="margin-top: 1.5rem;">Import the GPG key:</p>
-                <pre><code><span class="cmd">wget</span> -nv -O- https://repo.{{COMPANY}}.internal/repo-key.gpg | <span class="cmd">sudo gpg</span> --dearmor -o /usr/share/keyrings/{{COMPANY}}-repo.gpg</code></pre>
+                <pre><code><span class="cmd">wget</span> -nv -O- https://repo.{{ domain }}/repo-key.gpg | <span class="cmd">sudo gpg</span> --dearmor -o /usr/share/keyrings/{{ Organization | replace(' ', '-') | lower }}-repo.gpg</code></pre>
             </div>
 
             <div class="card">
-                <h2>Service Status</h2>
-                <p>Mirrors are refreshed daily at {{UPDATE_TIME}} UTC. For assistance, contact the infrastructure team.</p>
+                <h2>Downloads</h2>
+                <p>Access the required keys and configuration files below:</p>
+                <div style="margin-top: 1rem;">
+                    <a href="https://repo.{{ domain }}/repo-key.gpg" class="btn" style="padding: 0.5rem 1rem; font-size: 0.9rem;">Download GPG Key</a>
+                </div>
             </div>
         </main>
 
+        <div style="text-align: center; margin-top: 2rem;">
+            <a href="https://{{ item.fqdn if item is defined else 'repo.' ~ domain }}/" class="btn">Open Web Interface</a>
+        </div>
+
         <footer>
-            &#10227; Last Updated: {{LAST_UPDATE}}.<br>
-            &#8480; {{ORG_1}} &bull; &#8453; {{ORG_2}}
+            &#10227; Last Updated: {{ last_update }}.<br>
+            &#8480; {{ Organization }}<br>
+            &#8453; {{ Vendor }}
         </footer>
     </div>
+    <script>
+        const themeSelect = document.getElementById('theme-select');
+        let currentTheme = 'auto';
+        try {
+            currentTheme = localStorage.getItem('selected-theme') || 'auto';
+        } catch (e) {}
+        
+        themeSelect.value = currentTheme;
+
+        themeSelect.addEventListener('change', (e) => {
+            const theme = e.target.value;
+            if (theme === 'auto') {
+                document.documentElement.removeAttribute('data-theme');
+            } else {
+                document.documentElement.setAttribute('data-theme', theme);
+            }
+            try {
+                localStorage.setItem('selected-theme', theme);
+            } catch (e) {}
+        });
+    </script>
 </body>
+
 </html>

@@ -1,31 +1,23 @@
-kit_name: example_kit
 domain: example.internal
 cert_path: /opt/nginx/certs
 stack_path: /opt
 nginx_image: nginx:latest
 
+Organization: Corporation 1
+Vendor: Corporation 2
+last_update: "2026-04-29"
+
 repos:
   - name: ubuntu
-    fqdn: ubuntu.repo.{{ domain }}
-    target:
-    - uri: <target_ip_or_hostname>
-    - host_path: /mnt/ubuntu
-    source:
-    - uri: ubuntu.archive.ubuntu.com
-    - path: ubuntu
+    fqdn: ubuntu-mirror.{{ domain }}
+    distro: noble
+    components: main restricted universe multiverse
+    host_path: /mnt/ubuntu
   - name: clamav
-    fqdn: clamav.repo.{{ domain }}
-    target:
-    - uri: <target_ip_or_hostname>
-    - host_path: /mnt/clamav
-    source:
-    - uri: <clamav_source_repo_url>
-    - path: <clamav_source_repo_path>
-  - name: selected_debs
-    fqdn: debs.repo.{{ domain }}
-    target:
-    - uri: <target_ip_or_hostname>
-    - host_path: /mnt/ubuntu/selected_debs
-    source:
-    - uri: <debs_source_repo_url>
-    - path: <debs_source_repo_path>
+    fqdn: clamav-signatures.{{ domain }}
+    path: <clamav_source_repo_path>
+  - name: Extra Debian Packages
+    fqdn: extra-packages.{{ domain }}
+    distro: 2026.04
+    components: main
+    path: <debs_source_repo_path>
