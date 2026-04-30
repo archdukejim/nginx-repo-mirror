@@ -18,61 +18,82 @@
 </head>
 
 <body>
-    <div class="theme-selector">
-        <select id="theme-select" class="theme-select" aria-label="Select Theme">
-            <option value="auto">System Auto</option>
-            <option value="light">Light</option>
-            <option value="dark">Dark</option>
-            <option value="army">Army</option>
-            <option value="navy">Navy</option>
-            <option value="air-force">Air Force</option>
-            <option value="marines">Marines</option>
-            <option value="coast-guard">Coast Guard</option>
-            <option value="space-force">Space Force</option>
-            <option value="cyberpunk">Cyberpunk</option>
-        </select>
-    </div>
     <div class="container">
         <header>
-            <h1>{{ Organization }} Internal Package Mirrors</h1>
-            <p class="subtitle">Trusted Repositories for Baseline Deployments</p>
+            <div class="header-content">
+                <!-- <h1>{{ Organization }} Internal Package Mirrors</h1> -->
+                <h1>Corporation 1 Internal Package Mirrors</h1>
+                <p class="subtitle">Trusted Repositories for Baseline Deployments</p>
+            </div>
+            <div class="theme-selector">
+                <select id="theme-select" class="theme-select" aria-label="Select Theme">
+                    <option value="auto">System Auto</option>
+                    <option value="light">Light</option>
+                    <option value="dark">Dark</option>
+                    <option value="army">Army</option>
+                    <option value="navy">Navy</option>
+                    <option value="air-force">Air Force</option>
+                    <option value="marines">Marines</option>
+                    <option value="coast-guard">Coast Guard</option>
+                    <option value="space-force">Space Force</option>
+                    <option value="cyberpunk">Cyberpunk</option>
+                </select>
+            </div>
         </header>
 
         <div class="tabs-wrapper">
             <div class="tabs">
-                {% for repo in repos %}
+                <!-- {% for repo in repos %}
                 <a href="https://{{ repo.fqdn }}/" class="tab {% if item is defined and repo.name == item.name %}active{% endif %}">{{ repo.name | title }}</a>
-                {% endfor %}
+                {% endfor %} -->
+                <a href="javascript:void(0);" class="tab active" onclick="mockSwitchTab(this, 'ubuntu')">Ubuntu Mirror</a>
+                <a href="javascript:void(0);" class="tab" onclick="mockSwitchTab(this, 'clamav')">ClamAV Signatures</a>
+                <a href="javascript:void(0);" class="tab" onclick="mockSwitchTab(this, 'extra')">Extra Packages</a>
             </div>
         </div>
 
         <main>
             <div class="card">
+                <!--
                 <h2>Quick Start: {{ item.name | title if item is defined else 'Repository' }}</h2>
                 <p>Add this line to <code>/etc/apt/sources.list</code>:</p>
                 <pre><code>deb https://{{ item.fqdn if item is defined else 'repo.' ~ domain }}/ {{ item.distro | default('noble') }} {{ item.components | default('main') }}</code></pre>
 
                 <p style="margin-top: 1.5rem;">Import the GPG key:</p>
                 <pre><code><span class="cmd">wget</span> -nv -O- https://repo.{{ domain }}/repo-key.gpg | <span class="cmd">sudo gpg</span> --dearmor -o /usr/share/keyrings/{{ Organization | replace(' ', '-') | lower }}-repo.gpg</code></pre>
+                -->
+                <h2 id="mock-repo-title">Quick Start: Ubuntu</h2>
+                <p>Add this line to <code>/etc/apt/sources.list</code>:</p>
+                <pre><code id="mock-apt-source">deb https://ubuntu-mirror.example.internal/ noble main restricted universe multiverse</code></pre>
+
+                <p style="margin-top: 1.5rem;">Import the GPG key:</p>
+                <pre><code><span class="cmd">wget</span> -nv -O- https://repo.example.internal/repo-key.gpg | <span class="cmd">sudo gpg</span> --dearmor -o /usr/share/keyrings/corporation-1-repo.gpg</code></pre>
             </div>
 
             <div class="card">
                 <h2>Downloads</h2>
                 <p>Access the required keys and configuration files below:</p>
                 <div style="margin-top: 1rem;">
-                    <a href="https://repo.{{ domain }}/repo-key.gpg" class="btn" style="padding: 0.5rem 1rem; font-size: 0.9rem;">Download GPG Key</a>
+                    <!-- <a href="https://repo.{{ domain }}/repo-key.gpg" class="btn" style="padding: 0.5rem 1rem; font-size: 0.9rem;">Download GPG Key</a> -->
+                    <a href="https://repo.example.internal/repo-key.gpg" class="btn" style="padding: 0.5rem 1rem; font-size: 0.9rem;">Download GPG Key</a>
                 </div>
             </div>
         </main>
 
         <div style="text-align: center; margin-top: 2rem;">
-            <a href="https://{{ item.fqdn if item is defined else 'repo.' ~ domain }}/" class="btn">Open Web Interface</a>
+            <!-- <a href="https://{{ item.fqdn if item is defined else 'repo.' ~ domain }}/" class="btn">Open Web Interface</a> -->
+            <a id="mock-web-link" href="https://ubuntu-mirror.example.internal/" class="btn">Open Web Interface</a>
         </div>
 
         <footer>
+            <!--
             &#10227; Last Updated: {{ last_update }}.<br>
             &#8480; {{ Organization }}<br>
             &#8453; {{ Vendor }}
+            -->
+            &#10227; Last Updated: 2026-04-29.<br>
+            &#8480; Corporation 1<br>
+            &#8453; Corporation 2
         </footer>
     </div>
     <script>
@@ -95,6 +116,38 @@
                 localStorage.setItem('selected-theme', theme);
             } catch (e) {}
         });
+
+        // Mock UI Tab Switcher
+        const mockRepos = {
+            'ubuntu': {
+                name: 'Ubuntu',
+                fqdn: 'ubuntu-mirror.example.internal',
+                distro: 'noble',
+                components: 'main restricted universe multiverse'
+            },
+            'clamav': {
+                name: 'Clamav',
+                fqdn: 'clamav-signatures.example.internal',
+                distro: 'noble',
+                components: 'main'
+            },
+            'extra': {
+                name: 'Extra Debian Packages',
+                fqdn: 'extra-packages.example.internal',
+                distro: '2026.04',
+                components: 'main'
+            }
+        };
+
+        function mockSwitchTab(element, repoId) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            element.classList.add('active');
+
+            const repo = mockRepos[repoId];
+            document.getElementById('mock-repo-title').innerText = 'Quick Start: ' + repo.name;
+            document.getElementById('mock-apt-source').innerText = `deb https://${repo.fqdn}/ ${repo.distro} ${repo.components}`;
+            document.getElementById('mock-web-link').href = `https://${repo.fqdn}/`;
+        }
     </script>
 </body>
 

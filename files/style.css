@@ -119,9 +119,7 @@
 
 /* Theme Selector UI */
 .theme-selector {
-  position: absolute;
-  top: 1.5rem;
-  right: 1.5rem;
+  margin-top: 0.25rem;
 }
 
 .theme-select {
@@ -167,6 +165,19 @@ body {
   margin: 0 auto;
 }
 
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.header-content {
+  flex: 1;
+}
+
 h1 {
   font-size: 1.75rem;
   font-weight: 700;
@@ -175,7 +186,7 @@ h1 {
 
 .subtitle {
   color: var(--muted);
-  margin-bottom: 2rem;
+  margin-bottom: 0;
 }
 
 /* Top tabs / Navigation */
